@@ -20,6 +20,10 @@ class Translation(models.Model):
     source_text = models.TextField(null=False)
     target_text = models.TextField()
 
+    @property
+    def is_translated(self):
+        return self.target_text != "" and self.target_text is not None
+
     objects = TranslationManager()
 
     @property
@@ -32,4 +36,4 @@ class Translation(models.Model):
                                      self.target_lang, self.source_text)
 
     class Meta:
-        unique_together = ('context', 'source_lang', 'source_text')
+        unique_together = ('context', 'target_lang', 'source_text')

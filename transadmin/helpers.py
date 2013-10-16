@@ -1,5 +1,3 @@
-import jinja2
-
 from jingo import register
 
 from django.utils.translation import get_language
@@ -8,8 +6,7 @@ from .models import Translation
 
 
 @register.function
-@jinja2.contextfunction
-def _(ctx, text, source_lang=None, context=None):
+def _(text, source_lang=None, context=None):
     try:
         trans = Translation.objects.translate(text, get_language(), context,
                                               source_lang)
