@@ -1,8 +1,12 @@
-import polib
+try:
+    import polib
+except ImportError:
+    raise ImportError("Transadmin commands require polib. You can install it "
+                      "running: pip install polib")
 
 from transadmin.models import Translation
 
-from django.core.management.base import LabelCommand, make_option
+from django.core.management.base import LabelCommand, make_option, CommandError
 
 
 def save(source_text, target_text, target_lang, context=None):
@@ -30,5 +34,8 @@ class Command(LabelCommand):
         )
 
     def handle_label(self, label, **options):
+        language = options.get('language')
+        if not language:
+          raise CommandError("The -l or --language argument is required")
         extract_translations(label, options.get('language'),
                              options.get('context'))
