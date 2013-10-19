@@ -4,10 +4,13 @@ from django.conf import settings
 
 class TranslationManager(models.Manager):
     def translate(self, text, lang, context=None, source_lang=None):
-        return self.get(#models.Q(context=context) | models.Q(context=None),
-                        source_lang=source_lang or settings.LANGUAGE_CODE,
-                        source_text=text,
-                        target_lang=lang)
+        trans = self.filter(source_text=text,
+                            target_lang=lang)
+        if source_lang:
+            trans = trans.filter(source_lang=source_lang)
+        if context:
+            trans = trans.filter(context=context)
+        return trans
 
 
 class Translation(models.Model):
