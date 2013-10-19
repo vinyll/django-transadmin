@@ -32,15 +32,22 @@ class ModelTest(TestCase):
                                           context='shopping')[0].text,
             "Essayez-moi !")
 
+
 class HelperTest(TestCase):
     def setUp(self):
         Translation.objects.create(source_lang='en',
                                    target_lang='en',
                                    source_text="Test me!",
                                    target_text="Test me translated!")
+        Translation.objects.create(target_lang='en',
+                                   source_text="Untranslated text",
+                                   target_text="")
 
     def test_underscore(self):
         self.assertEqual(_("Test me!"), "Test me translated!")
 
     def test_not_found(self):
-        self.assertTrue(_("Test me!", 'de'), "Test me!")
+        self.assertEqual(_("Test me!", 'de'), "Test me!")
+
+    def test_blank(self):
+        self.assertEqual(_("Untranslated text"), "Untranslated text")
