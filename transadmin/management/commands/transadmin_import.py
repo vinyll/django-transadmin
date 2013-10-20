@@ -1,3 +1,5 @@
+from django.db import IntegrityError
+
 try:
     import polib
 except ImportError:
@@ -10,11 +12,13 @@ from django.core.management.base import LabelCommand, make_option, CommandError
 
 
 def save(source_text, target_text, target_lang, context=None):
-    Translation.objects.get_or_create(source_text=source_text,
-                                      target_text=target_text,
-                                      target_lang=target_lang,
-                                      context=context)
-
+    try:
+        Translation.objects.get_or_create(source_text=source_text,
+                                          target_text=target_text,
+                                          target_lang=target_lang,
+                                          context=context)
+    except IntegrityError:
+        pass
 
 def extract_translations(file, target_lang, context):
     for entry in polib.pofile(file):
