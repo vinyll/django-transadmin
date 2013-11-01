@@ -16,9 +16,8 @@ class TranslationAdminForm(forms.ModelForm):
 class TranslationAdmin(admin.ModelAdmin):
     model = Translation
     form = TranslationAdminForm
-    list_display = ('source_text', 'target_lang', 'context', 'source_lang',
-                    'is_translated',)
-    list_filter = ('context', 'target_lang', 'source_lang',)
+    list_display = ('source', 'context', 'language', 'is_translated',)
+    list_filter = ('context', 'trans',)
 
 
 admin.site.register(Translation, TranslationAdmin)

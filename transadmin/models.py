@@ -15,17 +15,17 @@ class TranslationManager(models.Manager):
 
 class Translation(models.Model):
     context = models.CharField(max_length=50, null=True)
-    source_lang = models.CharField(max_length=5, null=False,
-                                   default=settings.LANGUAGE_CODE)
-    target_lang = models.CharField(max_length=5, null=False,
-                                   default=settings.LANGUAGE_CODE,
-                                   choices=getattr(settings, 'LANGUAGES'))
-    source_text = models.TextField(null=False)
-    target_text = models.TextField()
+    language = models.CharField(max_length=5, null=False,
+                                default=settings.LANGUAGE_CODE,
+                                choices=getattr(settings, 'LANGUAGES'))
+    source = models.TextField(null=False)
+    trans = models.TextField(null=True)
+    comment = models.TextField(null=True)
+
 
     @property
     def is_translated(self):
-        return self.target_text != "" and self.target_text is not None
+        return self.trans != "" and self.trans is not None
 
     objects = TranslationManager()
 
@@ -34,9 +34,8 @@ class Translation(models.Model):
         return self.target_text
 
     def __unicode__(self):
-        return u"%s %s>%s \"%s\"" % (self.context or "[no context]",
-                                     self.source_lang,
-                                     self.target_lang, self.source_text)
+        return u"%s(%s) \"%s\"" % (self.context or "[no context]",
+                                     self.language, self.source)
 
     class Meta:
-        unique_together = ('context', 'target_lang', 'source_text')
+        unique_together = ('context', 'language', 'source')
