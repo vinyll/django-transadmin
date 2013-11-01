@@ -3,11 +3,8 @@ from django.conf import settings
 
 
 class TranslationManager(models.Manager):
-    def translate(self, text, lang, context=None, source_lang=None):
-        trans = self.filter(source_text=text,
-                            target_lang=lang)
-        if source_lang:
-            trans = trans.filter(source_lang=source_lang)
+    def translate(self, source, language, context=None):
+        trans = self.filter(source=source, language=language)
         if context:
             trans = trans.filter(context=context)
         return trans
@@ -22,7 +19,6 @@ class Translation(models.Model):
     trans = models.TextField(null=True)
     comment = models.TextField(null=True)
 
-
     @property
     def is_translated(self):
         return self.trans != "" and self.trans is not None
@@ -31,11 +27,11 @@ class Translation(models.Model):
 
     @property
     def text(self):
-        return self.target_text
+        return self.trans
 
     def __unicode__(self):
         return u"%s(%s) \"%s\"" % (self.context or "[no context]",
-                                     self.language, self.source)
+                                   self.language, self.source)
 
     class Meta:
         unique_together = ('context', 'language', 'source')

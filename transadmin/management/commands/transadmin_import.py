@@ -11,19 +11,19 @@ from transadmin.models import Translation
 from django.core.management.base import LabelCommand, make_option, CommandError
 
 
-def save(source_text, target_text, target_lang, context=None):
+def save(source, trans, language, context=None):
     try:
-        Translation.objects.get_or_create(source_text=source_text,
-                                          target_text=target_text,
-                                          target_lang=target_lang,
+        Translation.objects.get_or_create(source=source,
+                                          trans=trans,
+                                          language=language,
                                           context=context)
     except IntegrityError:
         pass
 
-def extract_translations(file, target_lang, context):
+
+def extract_translations(file, language, context):
     for entry in polib.pofile(file):
-        save(entry.msgid, entry.msgstr, target_lang=target_lang,
-             context=context)
+        save(entry.msgid, entry.msgstr, language=language, context=context)
 
 
 class Command(LabelCommand):
