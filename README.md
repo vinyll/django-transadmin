@@ -11,10 +11,45 @@ Compatible with the default Django template, [Jinja2](http://jinja.pocoo.org/) a
 
 #### Benefits
 
+Administrate your translations directly from the admin.
+Import your translations string from po files.
+Compatible with [Jingo](https://github.com/jbalogh/jingo)
 
 
 #### Quick tour
 
+In a template:
+
+```html
+{{ _("String to translate") }}
+```
+
+In a python file:
+
+```python
+from transadmin.helpers import _
+
+translated_text = _("String to translate")
+```
+
+##### Import translation
+
+You can automatically import a po file in some language:
+
+```python
+`python manage.py extract_translations -l fr locale/fr/messages.po`
+```
+> the extract_translations does not override or delete exising strings.
+
+Or do it manually:
+
+get to your admin (transadmin > Translation) and add:
+- source: "String to translate"
+- language: "fr"
+- trans: "Chaine à traduire"
+
+
+View your website in French.
 
 
 ## Installation
@@ -45,14 +80,3 @@ INSTALLED_APPS = (
 ```
 
 Congratulations, you're all set!
-
-
-## Usage
-
-## Configuration
-
-
-#### Cache
-
-
-## Troubleshooting
