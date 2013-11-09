@@ -9,6 +9,7 @@ class TranslationAdminForm(forms.ModelForm):
         super(TranslationAdminForm, self).__init__(*args, **kwargs)
         self.fields['context'].required = False
         self.fields['comment'].required = False
+        self.fields['trans'].required = False
 
     class Meta:
         model = Translation
