@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='django-transadmin',
-    version='0.2.2',
+    version='0.2.3',
     description='Translate texts from the admin interface.',
     long_description=open('README.md').read(),
     author='Vincent Agnano',

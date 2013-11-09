@@ -8,6 +8,7 @@ class TranslationAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(TranslationAdminForm, self).__init__(*args, **kwargs)
         self.fields['context'].required = False
+        self.fields['comment'].required = False
 
     class Meta:
         model = Translation
@@ -16,8 +17,8 @@ class TranslationAdminForm(forms.ModelForm):
 class TranslationAdmin(admin.ModelAdmin):
     model = Translation
     form = TranslationAdminForm
-    list_display = ('source', 'context', 'language', 'is_translated',)
-    list_filter = ('context', 'trans',)
+    list_display = ('source', 'context', 'language', 'trans_summary',)
+    list_filter = ('context', 'language',)
 
 
 admin.site.register(Translation, TranslationAdmin)

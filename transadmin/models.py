@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.dispatch import receiver
 
 
 class TranslationManager(models.Manager):
@@ -23,6 +24,15 @@ class Translation(models.Model):
     def is_translated(self):
         return self.trans != "" and self.trans is not None
 
+    @property
+    def trans_summary(self):
+        if self.is_translated:
+            summary = self.trans[:100]
+            if len(self.trans) > 100:
+                summary += "..."
+            return unicode(summary)
+        return ""
+
     objects = TranslationManager()
 
     @property
@@ -35,3 +45,9 @@ class Translation(models.Model):
 
     class Meta:
         unique_together = ('context', 'language', 'source')
+
+
+@receiver(models.signals.pre_save, sender=Translation)
+def translation_empty_context(sender, instance, **kwargs):
+    if instance.context == "":
+        instance.context = None
