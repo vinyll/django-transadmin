@@ -34,14 +34,10 @@ translated_text = _("String to translate")
 
 ##### Import translation
 
-You can automatically import a po file in some language:
+You can directly create a string to translate from the admin.
+When it comes to generate many pages, you may prefer the automation script.
 
-```python
-`python manage.py extract_translations -l fr locale/fr/messages.po`
-```
-> the extract_translations does not override or delete exising strings.
-
-Or do it manually:
+##### Manually
 
 get to your admin (transadmin > Translation) and add:
 - source: "String to translate"
@@ -49,7 +45,29 @@ get to your admin (transadmin > Translation) and add:
 - trans: "Chaine à traduire"
 
 
-View your website in French.
+##### Automation script
+
+Django allows you to generate _po_ files from templates, views and so on:
+```bash
+django-admin.py makemessages -l fr
+```
+
+_Transadmin_ then allows you to import a _po_ file into the database:
+
+```bash
+python manage.py transadmin_import my/fr/file.po -l fr
+```
+
+This command reads translations from _my/file.po_ and import every string into
+the database for _fr_ language.
+
+Your untranslated strings are now ready to get translated from the admin!
+
+> Even though the `transadmin_import` command is safe and preserves
+> your existing data. You are highly encouraged to make a backup before running
+> such commands.
+
+You can now view your website in French.
 
 
 ## Installation
