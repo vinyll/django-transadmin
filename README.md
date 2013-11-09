@@ -98,3 +98,12 @@ INSTALLED_APPS = (
 ```
 
 Congratulations, you're all set!
+
+
+#### Configuration
+
+A few settings are available:
+
+- `TRANSADMIN_LANGUAGES`: a tuple of tuples for available languages for the admin. Reads the settings.LANGUAGES by default.
+- `TRANSADMIN_CONTEXTS`: a tuple of tuples for available context. Free text by default.
+

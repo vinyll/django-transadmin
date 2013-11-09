@@ -11,7 +11,7 @@ def _(text, context=None):
         trans = Translation.objects.translate(text, get_language(), context)
         translated = trans[0].text
         return translated or text
-    except (Translation.DoesNotExist, IndexError):
+    except (Translation.DoesNotExist, IndexError, TypeError):
         return text
 
 

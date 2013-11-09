@@ -2,22 +2,12 @@ from django.contrib import admin
 from django import forms
 
 from .models import Translation
-
-
-class TranslationAdminForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super(TranslationAdminForm, self).__init__(*args, **kwargs)
-        self.fields['context'].required = False
-        self.fields['comment'].required = False
-        self.fields['trans'].required = False
-
-    class Meta:
-        model = Translation
+from .forms import TranslationForm
 
 
 class TranslationAdmin(admin.ModelAdmin):
     model = Translation
-    form = TranslationAdminForm
+    form = TranslationForm
     list_display = ('source', 'context', 'language', 'trans_summary',)
     list_filter = ('context', 'language',)
 

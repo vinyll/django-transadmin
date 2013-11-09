@@ -1,5 +1,4 @@
 from django.db import models
-from django.conf import settings
 from django.dispatch import receiver
 
 
@@ -13,9 +12,7 @@ class TranslationManager(models.Manager):
 
 class Translation(models.Model):
     context = models.CharField(max_length=50, null=True)
-    language = models.CharField(max_length=5, null=False,
-                                default=settings.LANGUAGE_CODE,
-                                choices=getattr(settings, 'LANGUAGES'))
+    language = models.CharField(max_length=5, null=False)
     source = models.TextField(null=False)
     trans = models.TextField(null=True)
     comment = models.TextField(null=True)
