@@ -17,3 +17,4 @@ class TranslationForm(forms.ModelForm):
 
     class Meta:
         model = Translation
+        exclude = ('source_uid',)

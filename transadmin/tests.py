@@ -30,6 +30,10 @@ class ModelTest(TestCase):
                                           context='shopping')[0].trans,
             "Essayez-moi !")
 
+    def test_uid_generated(self):
+        self.assertEqual(self.trans.uid, "9d21922a779672dcb84ab42ddf4d9e84",
+                         "Generates a unique source uid")
+
 
 class HelperTest(TestCase):
     def setUp(self):

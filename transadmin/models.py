@@ -1,3 +1,5 @@
+import hashlib
+
 from django.db import models
 from django.dispatch import receiver
 
@@ -16,6 +18,8 @@ class Translation(models.Model):
     source = models.TextField(null=False)
     trans = models.TextField(null=True)
     comment = models.TextField(null=True)
+    # Some DB can't manage uniqueess on TextField's
+    source_uid = models.CharField(max_length=32, null=True)
 
     @property
     def is_translated(self):
@@ -41,10 +45,18 @@ class Translation(models.Model):
                                    self.language, self.source)
 
     class Meta:
-        unique_together = ('context', 'language', 'source')
+        unique_together = ('context', 'language', 'source_uid')
 
 
 @receiver(models.signals.pre_save, sender=Translation)
 def translation_empty_context(sender, instance, **kwargs):
     if instance.context == "":
         instance.context = None
+
+
+@receiver(models.signals.pre_save, sender=Translation)
+def translation_generate_source_uid(sender, instance, **kwargs):
+    if instance.source:
+        hash = hashlib.md5()
+        hash.update(instance.source)
+        instance.uid = hash.hexdigest()
