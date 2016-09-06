@@ -62,5 +62,8 @@ def translation_empty_context(sender, instance, **kwargs):
 def translation_generate_source_uid(sender, instance, **kwargs):
     if instance.source:
         hash = hashlib.md5()
-        hash.update(instance.source.encode('utf8'))
+        try:
+            hash.update(instance.source.encode('utf8'))
+        except UnicodeDecodeError:
+            hash.update(instance.source)
         instance.uid = hash.hexdigest()
