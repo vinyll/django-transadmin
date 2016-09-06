@@ -1,14 +1,18 @@
 import hashlib
 
 from django.db import models
+from django.db.models import Q
 from django.dispatch import receiver
+from .settings import FALLBACK_LANGUAGE
 
 
 class TranslationManager(models.Manager):
-    def translate(self, source, language, context=None):
-        trans = self.filter(source=source, language=language)
+    def translate(self, source, language, context=None,
+                  fallback=FALLBACK_LANGUAGE):
+        trans = self.filter(Q(source=source),
+                            Q(language=language) | Q(language=fallback))
         if context:
-            trans = trans.filter(context=context)
+            trans = trans.filter(Q(context=context) | Q(context=None))
         return trans
 
 
@@ -58,5 +62,5 @@ def translation_empty_context(sender, instance, **kwargs):
 def translation_generate_source_uid(sender, instance, **kwargs):
     if instance.source:
         hash = hashlib.md5()
-        hash.update(instance.source)
+        hash.update(instance.source.encode('utf8'))
         instance.uid = hash.hexdigest()
