@@ -9,10 +9,11 @@ from .settings import FALLBACK_LANGUAGE
 class TranslationManager(models.Manager):
     def translate(self, source, language, context=None,
                   fallback=FALLBACK_LANGUAGE):
-        trans = self.filter(Q(source=source),
-                            Q(language=language) | Q(language=fallback))
+        trans = self.filter(source=source, language=language)
+        if not len(trans):
+            trans = self.filter(source=source, language=fallback)
         if context:
-            trans = trans.filter(Q(context=context) | Q(context=None))
+            trans = trans.filter(context=context)
         return trans
 
 
