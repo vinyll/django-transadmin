@@ -14,13 +14,19 @@ class TranslationManager(models.Manager):
         """
 
         if not fallback or language == fallback:
-            return self.filter(source=source, language=language)[0]
+            try:
+                return self.filter(source=source, language=language)[0]
+            except IndexError:
+                return None
 
         q = ('select *, case language when %(lang)s then 1 when %(fallback)s '
              'then 2 else 3 end as score from transadmin_translation where '
              'source = %(source)s order by score limit 1')
         params = {'source': source, 'lang': language, 'fallback': fallback}
-        return list(Translation.objects.raw(q, params))[0]
+        try:
+            return list(Translation.objects.raw(q, params))[0]
+        except IndexError:
+            return None
 
 
 class Translation(models.Model):
