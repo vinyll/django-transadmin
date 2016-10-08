@@ -11,9 +11,8 @@ from .models import Translation
 def _(text, context=None):
     try:
         trans = Translation.objects.translate(text, get_language(), context)
-        translated = trans[0].text
-        return translated or text
-    except (Translation.DoesNotExist, IndexError, TypeError, DatabaseError,
+        return trans.text if trans else text
+    except (Translation.DoesNotExist, TypeError, DatabaseError,
             AppRegistryNotReady):
         return text
 

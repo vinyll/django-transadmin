@@ -1,7 +1,6 @@
 import hashlib
 
 from django.db import models
-from django.db.models import Q
 from django.dispatch import receiver
 from .settings import FALLBACK_LANGUAGE
 
@@ -9,12 +8,19 @@ from .settings import FALLBACK_LANGUAGE
 class TranslationManager(models.Manager):
     def translate(self, source, language, context=None,
                   fallback=FALLBACK_LANGUAGE):
-        trans = self.filter(source=source, language=language)
-        if not len(trans):
-            trans = self.filter(source=source, language=fallback)
-        if context:
-            trans = trans.filter(context=context)
-        return trans
+        """
+        Find the translation for a language. If it is not found it will take
+        the one with the fallback language.
+        """
+
+        if not fallback or language == fallback:
+            return self.filter(source=source, language=language)[0]
+
+        q = ('select *, case language when %(lang)s then 1 when %(fallback)s '
+             'then 2 else 3 end as score from transadmin_translation where '
+             'source = %(source)s order by score limit 1')
+        params = {'source': source, 'lang': language, 'fallback': fallback}
+        return list(Translation.objects.raw(q, params))[0]
 
 
 class Translation(models.Model):
