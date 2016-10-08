@@ -1,20 +1,46 @@
 import hashlib
 
 from django.db import models
-from django.db.models import Q
 from django.dispatch import receiver
 from .settings import FALLBACK_LANGUAGE
+
+
+# Cached queries
+_translated = {}
 
 
 class TranslationManager(models.Manager):
     def translate(self, source, language, context=None,
                   fallback=FALLBACK_LANGUAGE):
-        trans = self.filter(source=source, language=language)
-        if not len(trans):
-            trans = self.filter(source=source, language=fallback)
-        if context:
-            trans = trans.filter(context=context)
-        return trans
+        """
+        Find the translation for a language. If it is not found it will take
+        the one with the fallback language.
+        """
+        params = {'source': source, 'lang': language, 'fallback': fallback}
+        cache_key = '|'.join(params.values())
+        if cache_key in _translated:
+            return _translated[cache_key]
+
+        if not fallback or language == fallback:
+            _translated[cache_key] = self.filter(source=source,
+                                                 language=language)[0]
+        else:
+            q = ('select *, case language when %(lang)s then 1 when '
+                 '%(fallback)s then 2 else 3 end as score from '
+                 'transadmin_translation where source = %(source)s '
+                 'order by score limit 1')
+            if cache_key not in _translated:
+                _translated[cache_key] = list(
+                    Translation.objects.raw(q, params))[0]
+        return _translated[cache_key]
+
+    def for_language(self, language, fallback=FALLBACK_LANGUAGE):
+        if not fallback or language == fallback:
+            return self.filter(language=language)
+        q = ('select *, case language when %(lang)s then 1 when %(fallback)s '
+             'then 2 else 3 end as score from transadmin_translation '
+             'group by source order by score')
+        return self.raw(q, {'lang': language, 'fallback': fallback})
 
 
 class Translation(models.Model):
