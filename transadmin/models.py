@@ -48,7 +48,7 @@ class Translation(models.Model):
             summary = self.trans[:100]
             if len(self.trans) > 100:
                 summary += "..."
-            return unicode(summary)
+            return str(summary)
         return ""
 
     objects = TranslationManager()
